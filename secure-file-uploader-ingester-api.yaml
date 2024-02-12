@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Secure File Uploader/Ingester API
+  description: API for securely uploading and ingesting documents.
+  version: 1.0.0
+servers:
+  - url: 'http://example.com/api'
+paths:
+  /upload:
+    post:
+      summary: Upload a document
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documentId:
+                    type: string
+                    description: Unique identifier for the uploaded document
+                  filename:
+                    type: string
+                  uploadStatus:
+                    type: string

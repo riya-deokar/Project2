@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+  title: Text NLP Analysis API
+  description: API for analyzing text in documents for keywords, sentiment, and entities.
+  version: 1.0.0
+servers:
+  - url: 'http://example.com/api'
+paths:
+  /analysis/keywords/{documentId}:
+    post:
+      summary: Analyze document for keywords
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          description: ID of the document to analyze
+          schema:
+            type: string
+      responses:
+        200:
+          description: Analysis successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      type: string
