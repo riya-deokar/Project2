@@ -1,38 +1,100 @@
+/* General App styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Layout for the main App component */
 .App {
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f5f5f5;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Style for the file input and upload button */
+.file-input-container {
+    margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.file-input {
+    margin-right: 10px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.upload-button {
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.upload-button:hover {
+    background-color: #45a049;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.upload-button:active {
+    background-color: #397d35;
+}
+
+/* Styles for displaying the upload status and document content */
+.status-message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.document-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 600px;
+    max-height: 500px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 1.5;
+}
+
+.sentiment-result {
+    margin-top: 20px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #e8f5e9;
+    color: #388e3c;
+    border-radius: 5px;
+}
+
+button:focus, input:focus {
+    outline: 2px solid #4CAF50;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 1024px) {
+    .document-content, .upload-button {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .App {
+        padding: 20px;
+    }
+    .document-content, .upload-button {
+        max-width: 95%;
+    }
+    .status-message, .sentiment-result {
+        padding: 10px;
+        word-wrap: break-word;
+    }
 }
