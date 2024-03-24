@@ -52,7 +52,7 @@ To enhance application scalability and responsiveness, a queuing system was inte
 
 2. **Install Dependencies**:
     ```bash
-    pip install -r requirements.txt
+    pip install -r r.txt
     ```
 
 3. **Set Environment Variables**:
