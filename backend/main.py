@@ -7,8 +7,8 @@ from flask_cors import CORS  # CORS support
 import fitz  # PyMuPDF
 import textract
 import os
-
-# Import your application's modules
+import logging
+from app.models import db
 from app.sentiment_analysis import analyze_sentiment
 from app.auth import auth_blueprint
 
@@ -21,31 +21,71 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # SQLite database lo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize Flask extensions
-db = SQLAlchemy(app)  # SQLAlchemy
+#db = SQLAlchemy(app)  # SQLAlchemy
+db.init_app(app)
+
 migrate = Migrate(app, db)  # Flask-Migrate
 jwt = JWTManager(app)  # Flask-JWT-Extended
 
 # Register Flask blueprints
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
+def extract_text_from_file(filepath, file_extension):
+    # Extract text based on file extension
+    text = ""
+    if file_extension == 'pdf':
+        with fitz.open(filepath) as doc:
+            for page in doc:
+                text += page.get_text()
+    elif file_extension in ['png', 'jpg', 'jpeg']:  # Example for image files
+        text = textract.process(filepath, method='tesseract', language='eng').decode()
+    elif file_extension in ['txt', 'csv']:  # Plain text or CSV files
+        with open(filepath, 'r', encoding='utf-8') as file:
+            text = file.read()
+    elif file_extension == 'docx':
+        text = textract.process(filepath, extension='docx').decode()
+    # Add more conditions for other file types if necessary
+    return text
+
 # Constants for allowed file types
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'docx', 'txt', 'csv'}
 
+logging.basicConfig(level=logging.INFO)
+
 def allowed_file(filename):
-    """
-    Check if the filename has an allowed extension.
-    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/api/upload/', methods=['POST'])
 def upload():
-    # Implement the logic for file uploading
-    pass  # Replace 'pass' with actual code
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join('/tmp', filename)
+            file.save(filepath)
+            
+            file_extension = filename.rsplit('.', 1)[1].lower()
+            text = extract_text_from_file(filepath, file_extension)
+            if text:
+                sentiment = analyze_sentiment(text)
+                return jsonify({'message': 'File processed successfully', 'text': text, 'sentiment': sentiment})
+            else:
+                return jsonify({'error': 'Could not extract text from file'}), 400
+        else:
+            return jsonify({'error': 'Unsupported file type or invalid file'}), 400
+    except Exception as e:
+        logging.error(f"Error processing file: {e}")
+        return jsonify({'error': 'An error occurred while processing the file'}), 500
 
 @app.route('/api/analyze/', methods=['POST'])
 def analyze_document():
-    # Implement the logic for document analysis
-    pass  # Replace 'pass' with actual code
+    text = request.json.get('text', '')
+    sentiment = analyze_sentiment(text)
+    return jsonify({'sentiment': sentiment})
 
 if __name__ == '__main__':
     # Ensure database tables are created and run the Flask application
