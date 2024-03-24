@@ -5,6 +5,8 @@ from .models import User, db  # Ensure this is the correct import path for your 
 
 auth_blueprint = Blueprint('auth', __name__)
 
+# API
+# Authorization and Authentication
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
     print("THIS FUNCTION IS WORKING AHAHAH")
