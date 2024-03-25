@@ -2,6 +2,8 @@
 
 This folder contains utility scripts related to the queuing system of the Document Sentiment Analyzer project. The queue system is essential for handling asynchronous task processing, ensuring that the application remains responsive and scalable.
 
+Go to main README.md for more on the Queuing System: https://github.com/riya-deokar/Project2/tree/main
+
 ## `queue_utils.py`
 
 ### Overview
