@@ -11,6 +11,7 @@ import logging
 from app.models import db
 from app.sentiment_analysis import analyze_sentiment
 from app.auth import auth_blueprint
+from app.utils.queue_utils import start_workers
 
 app = Flask(__name__)
 CORS(app)  # Apply CORS to your app
@@ -108,7 +109,6 @@ def generate_output():
 
 
 if __name__ == '__main__':
-    from queue_utils import start_workers
     # Ensure database tables are created and run the Flask application
     with app.app_context():
         db.create_all()
