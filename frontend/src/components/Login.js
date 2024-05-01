@@ -6,8 +6,31 @@ function Login({ onLogin }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // Email validation
+    const validateEmail = (email) => {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    };
+
+    // Password validation (Basic example: at least 6 characters)
+    const validatePassword = (password) => {
+        return password.length >= 6;
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!validateEmail(email)) {
+            setError('Invalid email format');
+            setLoading(false);
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            setError('Password must be at least 6 characters long');
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         setError('');
         try {
