@@ -10,8 +10,8 @@ def analyze_sentiment(text):
     
     # Determine sentiment
     if sentiment_polarity > 0.1:  # Adjust thresholds as necessary
-        return sentiment_polarity
+        return 'Positive'
     elif sentiment_polarity < -0.1:
-        return sentiment_polarity
+        return 'Negative'
     else:
-        return sentiment_polarity
+        return 'Neutral'

@@ -8,16 +8,18 @@ body, html {
 /* Layout for the main App component */
 .App {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* Row layout for side-by-side arrangement */
+    align-items: flex-start;
     justify-content: center;
     height: 100vh;
     background-color: #f5f5f5;
+    padding: 20px;
 }
 
 /* Style for the file input and upload button */
 .file-input-container {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
+    flex-basis: 100%;
 }
 
 .file-input {
@@ -45,7 +47,7 @@ body, html {
 
 /* Styles for displaying the upload status and document content */
 .status-message {
-    margin-top: 20px;
+    margin-top: 0px;
     font-weight: bold;
     color: #333;
 }
@@ -54,10 +56,11 @@ body, html {
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    max-width: 600px;
+    max-width: 500px;
     max-height: 500px;
     overflow-y: auto;
     margin-top: 20px;
+    margin-right: 20px; /* Separates from keywords */
     border: 1px solid #ddd;
     padding: 15px;
     text-align: left;
@@ -75,12 +78,44 @@ body, html {
     border-radius: 5px;
 }
 
+.keywords-section {
+    flex-basis: 300px; /* Sets width of keywords section */
+    margin-top: 20px;
+    margin-left: 20px; /* Space between text and keywords */
+    font-size: 16px;
+    color: #333;
+    max-width: 200px; /* Width limit */
+    overflow-y: auto;
+}
+
+/* Document and Keywords container layout */
+.document-keywords-container {
+    display: flex;
+    gap: 20px; /* Space between text and keywords */
+    max-width: 80%; /* Adjust as needed */
+    align-items: flex-start; /* Align to top */
+    justify-content: space-between;
+}
+
+/* Main content layout */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    gap: 20px; /* Reduce vertical gap */
+}
+
 button:focus, input:focus {
     outline: 2px solid #4CAF50;
 }
 
 /* Responsive design adjustments */
 @media (max-width: 1024px) {
+    .App {
+        flex-direction: column; /* Change back to column for small screens */
+    }
     .document-content, .upload-button {
         max-width: 80%;
     }

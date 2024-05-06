@@ -8,10 +8,16 @@ import fitz  # PyMuPDF
 import textract
 import os
 import logging
-from app.models import db
+from app.models import db 
 from app.sentiment_analysis import analyze_sentiment
 from app.auth import auth_blueprint
 from app.utils.queue_utils import start_workers
+from PIL import Image
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
+import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 app = Flask(__name__)
 CORS(app)  # Apply CORS to your app
@@ -22,31 +28,56 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # SQLite database lo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize Flask extensions
-#db = SQLAlchemy(app)  # SQLAlchemy
 db.init_app(app)
-
 migrate = Migrate(app, db)  # Flask-Migrate
 jwt = JWTManager(app)  # Flask-JWT-Extended
 
 # Register Flask blueprints
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
+nlp = spacy.load('en_core_web_sm')
+
 def extract_text_from_file(filepath, file_extension):
-    # Extract text based on file extension
     text = ""
     if file_extension == 'pdf':
         with fitz.open(filepath) as doc:
             for page in doc:
                 text += page.get_text()
-    elif file_extension in ['png', 'jpg', 'jpeg']:  # Example for image files
-        text = textract.process(filepath, method='tesseract', language='eng').decode()
+    elif file_extension in ['png', 'jpg', 'jpeg']:
+        # Use pytesseract directly for better control and error handling
+        try:
+            text = pytesseract.image_to_string(Image.open(filepath), lang='eng')
+        except Exception as e:
+            logging.error(f"OCR processing failed: {e}")
+            return '', str(e)  # Return error as string for better handling
     elif file_extension in ['txt', 'csv']:  # Plain text or CSV files
         with open(filepath, 'r', encoding='utf-8') as file:
             text = file.read()
     elif file_extension == 'docx':
-        text = textract.process(filepath, extension='docx').decode()
-    # Add more conditions for other file types if necessary
-    return text
+        try:
+            text = textract.process(filepath, extension='docx').decode('utf-8')
+        except Exception as e:
+            logging.error(f"Error processing DOCX file: {e}")
+            return '', str(e)  # Return error as string for better handling
+    return text, ''  # Return text and empty string for error if successful
+
+def extract_keywords(text):
+    doc = nlp(text)
+
+    # Only keep entities with specific labels
+    desired_entity_types = {'PERSON', 'ORG', 'GPE'}
+    keywords = [ent.text for ent in doc.ents if ent.label_ in desired_entity_types]
+
+    # Optional: Additional filtering or transformations can be added here
+
+    return keywords[:15]  # Limit to top 15 keywords
+
+# def extract_keywords_tfidf(text):
+#     vectorizer = TfidfVectorizer(stop_words='english', max_features=15)
+#     tfidf_matrix = vectorizer.fit_transform([text])
+#     terms = vectorizer.get_feature_names_out()
+
+#     return list(terms)  # Convert ndarray to list for JSON serialization
 
 # Constants for allowed file types
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'docx', 'txt', 'csv'}
@@ -63,23 +94,36 @@ def upload():
     try:
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
+
         file = request.files['file']
+
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join('/tmp', filename)
             file.save(filepath)
-            
+
             file_extension = filename.rsplit('.', 1)[1].lower()
-            text = extract_text_from_file(filepath, file_extension)
+            text, error = extract_text_from_file(filepath, file_extension)
+
+            if error:
+                return jsonify({'error': 'OCR processing failed', 'details': error}), 500
             if text:
                 sentiment = analyze_sentiment(text)
-                return jsonify({'message': 'File processed successfully', 'text': text, 'sentiment': sentiment})
+                keywords = extract_keywords(text)  # Extract keywords
+                return jsonify({
+                    'message': 'File processed successfully',
+                    'text': text,
+                    'sentiment': sentiment,
+                    'keywords': keywords  # Include keywords in response
+                })
             else:
                 return jsonify({'error': 'Could not extract text from file'}), 400
         else:
             return jsonify({'error': 'Unsupported file type or invalid file'}), 400
+
     except Exception as e:
         logging.error(f"Error processing file: {e}")
         return jsonify({'error': 'An error occurred while processing the file'}), 500
@@ -89,7 +133,17 @@ def upload():
 def analyze_document():
     text = request.json.get('text', '')
     sentiment = analyze_sentiment(text)
-    return jsonify({'sentiment': sentiment})
+    keywords = extract_keywords(text)  # Extract keywords
+    return jsonify({'sentiment': sentiment, 'keywords': keywords})  # Include keywords in response
+
+def analyze_document(text):
+    sentiment = analyze_sentiment(text)  # Assuming you already have this function
+    keywords = extract_keywords(text)
+    return {
+        'text': text,
+        'sentiment': sentiment,
+        'keywords': keywords
+    }
 
 
 # FUNCTION STUBS FOR UNHIGHLIGHTED API'S
