@@ -3,6 +3,7 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    background-color: #e0f7fa; /* Light cyan background for the entire app */
 }
 
 /* Layout for the main App component */
@@ -14,16 +15,53 @@ body, html {
     height: 100vh;
     background-color: #f5f5f5;
     padding: 20px;
+    border-radius: 10px; /* Rounded corners for app */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
 }
 
 /* Style for the file input and upload button */
 .file-input-container {
     margin-bottom: 0px;
+    margin-top: -10px;
     flex-basis: 100%;
 }
 
 .file-input {
     margin-right: 10px;
+    opacity: 0; /* Make it invisible */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.custom-file-button {
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    position: relative; /* Position relative to keep the file input inside */
+    overflow: hidden; /* Keep file input hidden */
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Adjust spacing between Choose File and Upload Document */
+}
+
+.custom-file-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.custom-file-button:active {
+    background-color: #003e7e; /* Darker shade on click */
+}
+
+.file-name {
+    margin-left: 10px; /* Space between file name and buttons */
+    margin-right: 10px;
+    font-weight: bold;
+    color: #333;
 }
 
 .upload-button {
@@ -47,9 +85,12 @@ body, html {
 
 /* Styles for displaying the upload status and document content */
 .status-message {
-    margin-top: 0px;
+    margin-top: -10px;
     font-weight: bold;
     color: #333;
+    background-color: #ffeb3b; /* Accent background color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px; /* Adjust padding */
 }
 
 .document-content {
@@ -59,9 +100,9 @@ body, html {
     max-width: 500px;
     max-height: 500px;
     overflow-y: auto;
-    margin-top: 20px;
-    margin-right: 20px; /* Separates from keywords */
-    border: 1px solid #ddd;
+    margin-top: 10px;
+    margin-right: 20px;
+    border: 2px solid #4CAF50; /* Accent border color */
     padding: 15px;
     text-align: left;
     background-color: #fff;
@@ -70,32 +111,37 @@ body, html {
 }
 
 .sentiment-result {
-    margin-top: 20px;
+    margin-top: 0px;
+    margin-bottom: 10px; /* Adjusted margin for spacing */
     font-weight: bold;
-    padding: 10px;
+    padding: 15px; /* Adjusted padding */
     background-color: #e8f5e9;
     color: #388e3c;
-    border-radius: 5px;
+    border-radius: 10px; /* Adjusted border-radius */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Light shadow */
 }
 
 .keywords-section {
-    flex-basis: 300px; /* Sets width of keywords section */
-    margin-top: 20px;
-    margin-left: 20px; /* Space between text and keywords */
+    flex-basis: 400px; /* Increase the width */
+    max-width: 400px; /* Adjust the width to fit more content */
+    margin-top: 0px; /* Adjust as needed */
+    margin-left: 20px;
     font-size: 16px;
     color: #333;
-    max-width: 200px; /* Width limit */
     overflow-y: auto;
+    border: 2px solid #4CAF50;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-/* Document and Keywords container layout */
 .document-keywords-container {
     display: flex;
-    gap: 20px; /* Space between text and keywords */
-    max-width: 80%; /* Adjust as needed */
-    align-items: flex-start; /* Align to top */
+    gap: 30px;
+    align-items: flex-start;
     justify-content: space-between;
+    margin-top: 10px; /* Adjust the top margin to move it up */
 }
+
 
 /* Main content layout */
 .main-content {
@@ -104,7 +150,28 @@ body, html {
     align-items: center;
     justify-content: flex-start;
     height: 100vh;
-    gap: 20px; /* Reduce vertical gap */
+    gap: 20px;
+}
+
+.logout-button {
+    cursor: pointer;
+    background-color: #ff5252; /* Red background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.logout-button:hover {
+    background-color: #ff1744; /* Slightly darker red on hover */
+}
+
+.logout-button:active {
+    background-color: #d32f2f; /* Darker shade on click */
 }
 
 button:focus, input:focus {
@@ -114,7 +181,7 @@ button:focus, input:focus {
 /* Responsive design adjustments */
 @media (max-width: 1024px) {
     .App {
-        flex-direction: column; /* Change back to column for small screens */
+        flex-direction: column;
     }
     .document-content, .upload-button {
         max-width: 80%;

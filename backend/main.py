@@ -16,8 +16,7 @@ from PIL import Image
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
 import spacy
-from sklearn.feature_extraction.text import TfidfVectorizer
-
+from search import search_wikipedia, search_nytimes
 
 app = Flask(__name__)
 CORS(app)  # Apply CORS to your app
@@ -72,14 +71,6 @@ def extract_keywords(text):
 
     return keywords[:15]  # Limit to top 15 keywords
 
-# def extract_keywords_tfidf(text):
-#     vectorizer = TfidfVectorizer(stop_words='english', max_features=15)
-#     tfidf_matrix = vectorizer.fit_transform([text])
-#     terms = vectorizer.get_feature_names_out()
-
-#     return list(terms)  # Convert ndarray to list for JSON serialization
-
-# Constants for allowed file types
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'docx', 'txt', 'csv'}
 
 logging.basicConfig(level=logging.INFO)
@@ -145,22 +136,18 @@ def analyze_document(text):
         'keywords': keywords
     }
 
+# Searching Keywords
+@app.route('/api/search/wikipedia', methods=['GET'])
+def search_wiki():
+    keyword = request.args.get('keyword')
+    result = search_wikipedia(keyword)
+    return jsonify({'result': result})
 
-# FUNCTION STUBS FOR UNHIGHLIGHTED API'S
-# Feed Ingester
-@app.route('/api/ingest/', methods=['POST'])
-def ingest_feed():
-    # Placeholder for feed ingestion logic
-    # You could process RSS feeds, social media streams, etc.
-    return jsonify({'message': 'Feed ingestion logic not yet implemented'}), 501
-
-# Output Generator
-@app.route('/api/generate/', methods=['GET'])
-def generate_output():
-    # Placeholder for output generation logic
-    # You could generate reports, summaries, visualizations, etc.
-    return jsonify({'message': 'Output generation logic not yet implemented'}), 501
-
+@app.route('/api/search/nytimes', methods=['GET'])
+def search_nyt():
+    keyword = request.args.get('keyword')
+    result = search_nytimes(keyword)
+    return jsonify({'result': result})
 
 if __name__ == '__main__':
     # Ensure database tables are created and run the Flask application
