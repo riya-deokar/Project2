@@ -3,7 +3,6 @@ import Login from './components/Login';
 import Register from './components/Register';
 import './App.css';
 
-// Function to fetch links for a keyword
 async function fetchKeywordLinks(keyword) {
     const responses = await Promise.all([
         fetch(`/api/search/wikipedia?keyword=${keyword}`),
@@ -126,15 +125,19 @@ function App() {
                         {keywords.length > 0 && (
                             <div className="keywords-section">
                                 <strong>Keywords:</strong>
-                                <ul>
+                                <ul className="keywords-list">
                                     {keywords.map((keyword, index) => (
-                                        <li key={index}>
-                                            {keyword}
+                                        <li key={index} className="keyword-item">
+                                            <span className="keyword-text">{keyword}</span>
                                             {keywordLinks.wikipedia && (
-                                                <a href={keywordLinks.wikipedia} target="_blank" rel="noopener noreferrer"> (Wikipedia)</a>
+                                                <a href={keywordLinks.wikipedia} target="_blank" rel="noopener noreferrer" className="keyword-link wikipedia-link">
+                                                    (Wikipedia)
+                                                </a>
                                             )}
                                             {keywordLinks.nytimes && (
-                                                <a href={keywordLinks.nytimes} target="_blank" rel="noopener noreferrer"> (NYTimes)</a>
+                                                <a href={keywordLinks.nytimes} target="_blank" rel="noopener noreferrer" className="keyword-link nyt-link">
+                                                    (NYTimes)
+                                                </a>
                                             )}
                                         </li>
                                     ))}
