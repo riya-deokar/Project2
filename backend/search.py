@@ -12,28 +12,23 @@ NYT_BASE_URL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json'
 
 def search_wikipedia(keyword):
     try:
-        # Perform a search to find potential page titles
         search_results = wikipedia.search(keyword)
-        
         if search_results:
-            # Retrieve the page URL of the first search result
             page = wikipedia.page(search_results[0], auto_suggest=False)
             return page.url
         else:
-            print(f"No results found for keyword: {keyword}")
             return None
     except wikipedia.exceptions.DisambiguationError as e:
-        # Handle disambiguation error by using the first option
         try:
             page = wikipedia.page(e.options[0], auto_suggest=False)
             return page.url
         except Exception as e:
-            print(f"Error retrieving article for disambiguated {keyword}: {e}")
+            print(f"Error: {e}")
             return None
     except Exception as e:
-        print(f"Error retrieving article for {keyword}: {e}")
+        print(f"Error: {e}")
         return None
-
+    
 def search_nytimes(keyword):
     params = {
         'q': keyword,
@@ -43,7 +38,7 @@ def search_nytimes(keyword):
     if response.status_code == 200:
         articles = response.json()['response']['docs']
         if articles:
-            return articles[0]['web_url']  # Return only the first article's link
+            return articles[0]['web_url']
         else:
             return None
     else:
