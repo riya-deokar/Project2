@@ -1,110 +1,66 @@
-# Smart Document Analyzer / Document Sentiment Analyzer
+# EchoView.ai: AR Glasses for the Deaf and Hard of Hearing
 
-A full-stack application that analyzes sentiment in uploaded documents, built with a React frontend and Flask backend. This README details the project setup, functionalities, and usage.
+![Logo](images/Logo.png)
 
-## Overview
+## Introduction
+EchoView.ai introduces an innovative solution designed to significantly enhance communication for the Deaf and Hard of Hearing community. Utilizing advanced technology, our glasses provide real-time speech-to-text transcription, displaying conversations directly in the user's field of vision.
 
-The Document Sentiment Analyzer offers:
+## Mission Statement
+Our mission is to foster community and innovation by enabling everyone to hold the key to understanding spoken interactions.
 
-- Secure user authentication and registration.
-- File uploading capabilities for PDFs, images, text files, etc.
-- Asynchronous text extraction and sentiment analysis.
-- A queue system for background processing of tasks.
-- A frontend interface for file uploading and viewing results.
+## Key Features
+- **Real-Time Transcription:** Speech-to-text functionality that operates in real-time.
+- **OLED Display:** Text is displayed on a discreet, built-in OLED screen within the glasses.
+- **Bluetooth Connectivity:** Seamless integration with iOS devices through a custom app.
+- **User-Friendly Design:** Lightweight, comfortable, and designed for everyday wear.
 
-## Project Summary
+## System Overview
+EchoView.ai glasses are powered by an ESP32-C3, featuring audio capturing and an OLED display for output. The system includes:
+- ESP32-C3 for processing
+- JVC HA-ET65BV Microphone and Device microphone, also compatible with MEMS microphones and various other audio inputs
+- OLED display for text output
+- Bluetooth module for mobile connectivity
+- Birdbath Combiners/Optical Combiner (series of two-way mirrors) for projecting the image from OLED
 
-### APIs Development
+## Installation
+### Hardware Setup (Detailed information in README_hardware.md)
+1. Connect the MEMS microphones to the ESP32-C3.
+2. Attach the OLED display to the ESP32-C3.
+3. Ensure all connections are secure and the system is powered (3.3v).
 
-**Client/Server Architecture**:
-- Implemented RESTful APIs in a Flask backend to handle user authentication, file uploads, and sentiment analysis.
-- Utilized React for the frontend to create interactive UIs, making API requests to the backend for processing and displaying results.
+### Software Setup (Detailed information in README_software.md)
+1. Clone this repository to your ESP32-C3.
+2. Navigate to the /Device directory and flash the echoview_esp32_v1.ino file onto the ESP32.
 
-**Frontend/Backend Interaction**:
-- **Authentication API**: Allows users to register and login, maintaining secure sessions with JWTs.
-- **File Upload API**: Users can upload documents (PDFs, images, text files), which are then queued for asynchronous processing.
-- **Sentiment Analysis API**: Extracted text from documents is analyzed for sentiment, providing users with insights into their content.
+## Usage
+### Starting the Device
+Power on the EchoView.ai glasses. The device will automatically boot up and the Raspberry Pi will begin processing input from the microphones.
 
-### Queue System Implementation
+### Using the Mobile App
+1. Download the EchoView.ai app from the iOS App Store.
+2. Press and hold the button on the side of the headset for 3 seconds until device flashes 3 times.
+3. Navigate to Bluetooth in device Settings and connect to the headset.
+4. Open the app and pair it with your EchoView.ai glasses.
+5. Start Transcribing!
 
-To enhance application scalability and responsiveness, a queuing system was integrated:
-- **Asynchronous Processing**: Offloads heavy lifting from the web request-response cycle, placing tasks in queues for background processing.
-- **PDF and NLP Analysis Queues**: Separately handle file processing and sentiment analysis, improving efficiency and manageability.
-- **Worker Threads**: Continuously monitor queues and process tasks, ensuring timely task completion without blocking user interactions.
+### Daily Operation
+Simply wear the glasses as you would any regular glasses. Conversations will be transcribed in real-time and displayed in your field of view.
 
-### Frontend and Backend Details
+## Safety and Maintenance
+- Keep the device dry and avoid exposure to extreme temperatures.
+- Regularly update the software through the EchoView.ai app to ensure optimal performance and security.
 
-**Frontend**:
-- Built with React, offering a dynamic and responsive user interface.
-- Handles user inputs, file uploads, and displays sentiment analysis results interactively.
-- Implements client-side routing and state management for a seamless user experience.
+![Flow Chart](images/flow_chart.png)
 
-**Backend**:
-- Developed with Flask, serving as a robust and scalable API server.
-- Manages user authentication, file storage, and invokes the queuing system for file and text processing.
-- Integrates with SQLAlchemy for database operations and JWT for secure authentication.
+[![Watch the Demo](images/glasses2)](https://drive.google.com/file/d/1j2KLc6h1_2RdIPNPQ-ITHF-1azErev8u/view?usp=sharing "Watch the Demo")
 
-## Setup
+For more detailed information, please refer to our [User Manual](Documentation/CopyOfPreviousReports/UserManual.pdf)
 
-### Backend (Flask)
+## Future Plans
+EchoView.ai is exploring the integration of large language models from Hugging Face to enhance the device's capabilities. This will enable compatibility with Android devices and introduce additional languages and smart features, improving accessibility and user experience.
 
-1. **Pre-requisites**: Ensure Python 3.8+ and pip are installed.
+## Acknowledgments
+Special thanks to our team members and advisors who have made significant contributions to the development and success of this project.
 
-2. **Install Dependencies**:
-    ```bash
-    pip install -r r.txt
-    ```
-
-3. **Set Environment Variables**:
-    ```bash
-    export FLASK_APP=main.py
-    export FLASK_ENV=development
-    ```
-
-4. **Initialize Database**:
-    ```bash
-    flask db init
-    flask db migrate
-    flask db upgrade
-    ```
-
-5. **Run the Application**:
-    ```bash
-    flask run
-    ```
-
-### Frontend (React)
-
-1. **Pre-requisites**: Ensure Node.js and npm are installed.
-
-2. **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-
-3. **Start the Application**:
-    ```bash
-    npm start
-    ```
-
-## APIs
-
-- **Auth**: 
-    - Register: `POST /auth/register`
-    - Login: `POST /auth/login`
-    - Protected: `GET /auth/protected` (requires JWT)
-
-- **File Processing**: 
-    - Upload: `POST /api/upload/` (asynchronously processes files)
-
-- **Sentiment Analysis**: 
-    - Analyze: `POST /api/analyze/` (returns sentiment of submitted text)
-
-## Queuing System
-
-Implemented in `queue_utils.py`, the queuing system manages background processing, enhancing performance under load:
-
-- **PDF Analysis Queue**: Handles asynchronous processing of uploaded documents.
-- **NLP Analysis Queue**: Manages background sentiment analysis of texts.
-
-Workers continuously process tasks from these queues independently of the main application flow.
+---
+EchoView.ai – Bridging the communication gap with cutting-edge technology.
